@@ -1,0 +1,5 @@
+#!/bin/bash
+task=$(ps aux | grep start | grep Ss | awk '{print $2}')
+kill $task
+make
+spawn-fcgi -p 8000 src/start

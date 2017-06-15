@@ -1,0 +1,47 @@
+#!/bin/bash
+server=172.20.4.85
+hflag=
+tflag=
+Hflag=
+lflag=
+lcomm=
+errflag=
+args=$(getopt -q -n "${0}" -o "t,H,l:,h" -l "temperatury,Humidity,led,help:" -- "$@" 2>&1)
+eval set -- "${args}"
+
+while true ; do
+  case "$1" in
+    -h|--help) hflag=1 ; break ;;
+    -t|--temperatury) tflag=1 ; shift ;;
+    -H|--Humidity) Hflag=1 ; shift ;;
+    -l|--led) lflag=1; shift ; lcomm="${1}"; shift ;;
+    --) break ;;
+    *) errflag=1 ;;
+  esac
+done
+
+if [ -n "${errflag}" ]; then echo "Wrong command. Enter -h for Help" ; return 1
+
+
+#help
+elif [ -n "${hflag}" ] ; then
+	echo =============================================================
+	echo 			  "Smart IOT"				 
+	echo =============================================================
+	echo "Option:"
+	echo 	"-h print synopsis of how to run the script \(this msg\)"
+	echo 	"-t display temperature"
+	echo 	"-H display humidity"
+	echo 	"-l on turn the led on"
+	echo    "-l off turn the led off"
+	echo 	"-l status chech led status"
+	echo =============================================================
+fi
+
+if [ -n "${tflag}" ] ; then value=$(curl -s -d "temperatury" "${server}"); echo "${value}"; fi
+sleep 1
+if [ -n "${Hflag}" ] ; then value=$(curl -s -d "Humidity" "${server}"); echo "${value}"; fi
+if [ -n "${lflag}" ] ; then value=$(curl -s -d "${lcomm}" "${server}"); echo "${value}"; fi
+
+#value=$(curl -s -d "${tflag}, ${Hflag}, ${lcomm}" "${server}")
+#echo $value
